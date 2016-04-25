@@ -1033,7 +1033,7 @@ class SphinxClient:
                     AssertInt32(val)
 
         # build request
-        req = [pack('>L', len(index)), index, pack('>L', len(attrs))]
+        req = [pack('>L', len(index)), index.encode(), pack('>L', len(attrs))]
 
         ignore_absent = 0
         if ignorenonexistent:
@@ -1043,7 +1043,7 @@ class SphinxClient:
         if mva:
             mva_attr = 1
         for attr in attrs:
-            req.append(pack('>L', len(attr)) + attr)
+            req.append(pack('>L', len(attr)) + attr.encode())
             req.append(pack('>L', mva_attr))
 
         req.append(pack('>L', len(values)))
@@ -1063,7 +1063,7 @@ class SphinxClient:
         if not sock:
             return None
 
-        req = ''.join(req)
+        req = b''.join(req)
         length = len(req)
         req = pack('>2HL', SEARCHD_COMMAND_UPDATE, VER_COMMAND_UPDATE, length) + req
         self._Send(sock, req)
